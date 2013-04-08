@@ -11,8 +11,9 @@
 #import "DetailViewController.h"
 
 @interface MasterViewController () {
-    NSMutableArray *_objects;
+    NSMutableArray *_locations;
 }
+- (void)retrieveData;
 @end
 
 @implementation MasterViewController
@@ -43,14 +44,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return _locations.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDate *object = _objects[indexPath.row];
+    NSDate *object = _locations[indexPath.row];
     cell.textLabel.text = [object description];
     return cell;
 }
@@ -65,9 +66,28 @@
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = _objects[indexPath.row];
+        NSDate *object = _locations[indexPath.row];
         [[segue destinationViewController] setDetailItem:object];
     }
+}
+
+- (void)retrieveData {
+    NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://gentle-harbor-2155.herokuapp.com/foodmenu"]];
+    NSError *parseError = nil;
+    
+    NSDictionary *restaurants = [NSJSONSerialization JSONObjectWithData:menuJson
+                                                                options:kNilOptions
+                                                                  error:&parseError];
+    
+    NSDictionary *results = [restaurants objectForKey:@"Restaurants"];
+    
+    _locations = [[NSMutableArray alloc] init];
+    for (NSDictionary *restaurant in [results allValues]) {
+        if ([restaurant isKindOfClass:[NSDictionary class]]) {
+            [_locations addObject:restaurant];
+        }
+    }
+    
 }
 
 @end
