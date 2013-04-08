@@ -31,7 +31,27 @@
     // Update the user interface for the detail item.
 
     if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
+        self.navigationItem.title = [self.detailItem objectForKey:@"Name"];
+        NSString *start = [self.detailItem objectForKey:@"Start"];
+        NSString *end = [self.detailItem objectForKey:@"End"];
+        NSDictionary *menu = [self.detailItem objectForKey:@"Menu"];
+        NSString *menuContents = @"";
+        for (NSString *day in menu) {
+            menuContents = [menuContents stringByAppendingFormat:@"\n\n  %@:", day];
+            for (NSString *meal in [menu objectForKey:day]) {
+                menuContents = [menuContents stringByAppendingFormat:@"\n\t%@:", meal];
+                id result = [[[[menu objectForKey:day] objectForKey:meal] objectForKey:@"Items"] objectForKey:@"result"];
+                if ([result isKindOfClass:[NSString class]]) {
+                    menuContents = [menuContents stringByAppendingFormat:@"\n\t%@", result];
+                }
+                else {
+                    for (NSString *item in result) {
+                        menuContents = [menuContents stringByAppendingFormat:@"\n\t%@", item];
+                    }
+                }
+            }
+        }
+        self.detailDescriptionTextView.text = [NSString stringWithFormat:@"Start Date: %@\nEnd Date: %@\nMenu: %@", start, end, menuContents];
     }
 }
 
