@@ -27,6 +27,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [self retrieveData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -51,8 +52,8 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDate *object = _locations[indexPath.row];
-    cell.textLabel.text = [object description];
+    NSDictionary *object = _locations[indexPath.row];
+    cell.textLabel.text = [object objectForKey:@"Name"];
     return cell;
 }
 
