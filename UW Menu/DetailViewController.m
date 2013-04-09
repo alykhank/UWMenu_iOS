@@ -74,8 +74,6 @@
 {
     if (self.detailItem) {
         self.menuItems = [[NSMutableArray alloc] init];
-        [self.menuItems addObject:[NSString stringWithFormat:@"Start: %@", [self.detailItem objectForKey:@"Start"]]];
-        [self.menuItems addObject:[NSString stringWithFormat:@"End: %@", [self.detailItem objectForKey:@"End"]]];
         NSDictionary *menu = [self.detailItem objectForKey:@"Menu"];
         for (NSString *day in menu) {
             [self.menuItems addObject:day];

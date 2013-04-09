@@ -53,7 +53,15 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
     NSDictionary *object = _locations[indexPath.row];
+    
     cell.textLabel.text = [object objectForKey:@"Name"];
+    
+    NSString *start = [object objectForKey:@"Start"];
+    start = [[start substringToIndex:[start length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+    NSString *end = [object objectForKey:@"End"];
+    end = [[end substringToIndex:[end length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", start, end];
+    
     return cell;
 }
 
