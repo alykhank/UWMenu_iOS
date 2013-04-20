@@ -7,7 +7,6 @@
 //
 
 #import "MasterViewController.h"
-
 #import "DetailViewController.h"
 
 @interface MasterViewController () {
@@ -17,11 +16,6 @@
 @end
 
 @implementation MasterViewController
-
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-}
 
 - (void)viewDidLoad
 {
@@ -38,11 +32,6 @@
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return _locations.count;
@@ -50,32 +39,31 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Restaurant Name" forIndexPath:indexPath];
 
-    NSDictionary *object = _locations[indexPath.row];
+    NSDictionary *location = _locations[indexPath.row];
     
-    cell.textLabel.text = [object objectForKey:@"Name"];
+    cell.textLabel.text = [location objectForKey:@"Name"];
     
-    NSString *start = [object objectForKey:@"Start"];
-    start = [[start substringToIndex:[start length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-    NSString *end = [object objectForKey:@"End"];
-    end = [[end substringToIndex:[end length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", start, end];
+//    NSString *start = [object objectForKey:@"Start"];
+//    start = [[start substringToIndex:[start length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+//    NSString *end = [object objectForKey:@"End"];
+//    end = [[end substringToIndex:[end length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+//    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", start, end];
     
     return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    // Return NO if you do not want the specified item to be editable.
-    return NO;
+    return @"Restaurants";
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = _locations[indexPath.row];
+        NSDictionary *object = _locations[indexPath.row];
         [[segue destinationViewController] setDetailItem:object];
     }
 }
@@ -84,15 +72,16 @@
     NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://gentle-harbor-2155.herokuapp.com/foodmenu"]];
     NSError *parseError = nil;
     
-    NSDictionary *restaurants = [NSJSONSerialization JSONObjectWithData:menuJson
+    NSDictionary *results = [NSJSONSerialization JSONObjectWithData:menuJson
                                                                 options:kNilOptions
                                                                   error:&parseError];
     
-    NSDictionary *results = [restaurants objectForKey:@"Restaurants"];
+    NSLog(@"Response: %@", results);
+    NSDictionary *restaurants = [results objectForKey:@"Restaurants"];
     
     _locations = [[NSMutableArray alloc] init];
-    for (NSDictionary *restaurant in [results allValues]) {
-        if ([restaurant isKindOfClass:[NSDictionary class]]) {
+    for (NSDictionary *restaurant in [restaurants allValues]) {
+        if ([restaurant isKindOfClass:[NSDictionary class]] && [restaurant objectForKey:@"Menu"]) {
             [_locations addObject:restaurant];
         }
     }
