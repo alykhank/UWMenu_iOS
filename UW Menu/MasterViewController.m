@@ -60,7 +60,7 @@
 }
 
 - (void)retrieveData {
-    NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://uwmenu.com/foodmenu"]];
+    NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://uwmenu.com/menu"]];
     NSError *parseError = nil;
     NSDictionary *results = [NSJSONSerialization JSONObjectWithData:menuJson
                                                             options:kNilOptions
