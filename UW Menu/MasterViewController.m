@@ -40,17 +40,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Restaurant Name" forIndexPath:indexPath];
-
     NSDictionary *location = _locations[indexPath.row];
-    
-    cell.textLabel.text = [location objectForKey:@"Name"];
-    
-//    NSString *start = [object objectForKey:@"Start"];
-//    start = [[start substringToIndex:[start length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-//    NSString *end = [object objectForKey:@"End"];
-//    end = [[end substringToIndex:[end length]-5] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-//    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", start, end];
-    
+    cell.textLabel.text = [location objectForKey:@"outlet_name"];
     return cell;
 }
 
@@ -69,23 +60,18 @@
 }
 
 - (void)retrieveData {
-    NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://gentle-harbor-2155.herokuapp.com/foodmenu"]];
+    NSData *menuJson = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://uwmenu.com/menu"]];
     NSError *parseError = nil;
-    
     NSDictionary *results = [NSJSONSerialization JSONObjectWithData:menuJson
-                                                                options:kNilOptions
-                                                                  error:&parseError];
-    
-    NSLog(@"Response: %@", results);
-    NSDictionary *restaurants = [results objectForKey:@"Restaurants"];
-    
-    _locations = [[NSMutableArray alloc] init];
-    for (NSDictionary *restaurant in [restaurants allValues]) {
-        if ([restaurant isKindOfClass:[NSDictionary class]] && [restaurant objectForKey:@"Menu"]) {
+                                                            options:kNilOptions
+                                                              error:&parseError];
+    NSArray *restaurants = [results objectForKey:@"outlets"];
+    _locations = [NSMutableArray array];
+    for (NSDictionary *restaurant in restaurants) {
+        if ([restaurant isKindOfClass:[NSDictionary class]] && [restaurant objectForKey:@"menu"]) {
             [_locations addObject:restaurant];
         }
     }
-    
 }
 
 @end
